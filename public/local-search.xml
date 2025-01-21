@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>todoList</title>
+    <link href="/2025/01/21/todoList/"/>
+    <url>/2025/01/21/todoList/</url>
+    
+    <content type="html"><![CDATA[<div>            <input type="checkbox"  checked="checked">博客搭建          </div><div>            <input type="checkbox"  >网站评论区设置          </div><div>            <input type="checkbox"  >网站鼠标样式更改          </div><div>            <input type="checkbox"  >用十日终焉打开自己的一生          </div>]]></content>
+    
+    
+    <categories>
+      
+      <category>others</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>ZJUCTF2024 writeup</title>
     <link href="/2025/01/17/ZJUCTF2024wp/"/>
     <url>/2025/01/17/ZJUCTF2024wp/</url>
