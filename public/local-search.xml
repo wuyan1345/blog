@@ -8,7 +8,7 @@
     <link href="/2025/01/21/todoList/"/>
     <url>/2025/01/21/todoList/</url>
     
-    <content type="html"><![CDATA[<div>            <input type="checkbox"  checked="checked">博客搭建          </div><div>            <input type="checkbox"  checked="checked">网站评论区设置          </div><div>            <input type="checkbox"  >网站鼠标样式更改          </div><div>            <input type="checkbox"  >用十日终焉打开自己的一生          </div>]]></content>
+    <content type="html"><![CDATA[<div>            <input type="checkbox"  >用十日终焉打开自己的一生          </div><div>            <input type="checkbox"  >网站鼠标样式更改          </div><div>            <input type="checkbox"  >正则表达式学习          </div><div>            <input type="checkbox"  >网站加密文章设置          </div><div>            <input type="checkbox"  >ctf指令设计，true          </div><div>            <input type="checkbox"  checked="checked">网站评论区设置          </div><div>            <input type="checkbox"  checked="checked">博客搭建          </div>]]></content>
     
     
     <categories>
