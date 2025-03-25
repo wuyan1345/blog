@@ -1,0 +1,768 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/title.gif">
+  <link rel="icon" href="/assets/title.gif">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="WuYan">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="浅记一道特别有意思的题目😍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TPCTF2025 EncryptedChat writeup">
+<meta property="og:url" content="http://13.250.14.141/2025/03/25/TPCTF2025/index.html">
+<meta property="og:site_name" content="WuYan&#39;s eave">
+<meta property="og:description" content="浅记一道特别有意思的题目😍">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://13.250.14.141/img/TPCTF2025/TPCTF.png">
+<meta property="article:published_time" content="2025-03-25T05:53:32.000Z">
+<meta property="article:modified_time" content="2025-03-25T11:07:42.132Z">
+<meta property="article:author" content="WuYan">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://13.250.14.141/img/TPCTF2025/TPCTF.png">
+  
+  
+  
+  <title>TPCTF2025 EncryptedChat writeup - WuYan&#39;s eave</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"13.250.14.141","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>WuYan</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/girl.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="TPCTF2025 EncryptedChat writeup"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-25 13:53" pubdate>
+          2025年3月25日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="CTF writeup"
+        id="heading-61eec73aca74595bf77af749a8323605" role="tab" data-toggle="collapse" href="#collapse-61eec73aca74595bf77af749a8323605"
+        aria-expanded="true"
+      >
+        CTF writeup
+        <span class="list-group-count">(3)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-61eec73aca74595bf77af749a8323605"
+           role="tabpanel" aria-labelledby="heading-61eec73aca74595bf77af749a8323605">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2025/01/17/ZJUCTF2024wp/" title="ZJUCTF2024 writeup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZJUCTF2024 writeup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/02/09/VNCTF2025/" title="VNCTF2025 writeup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">VNCTF2025 writeup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/25/TPCTF2025/" title="TPCTF2025 EncryptedChat writeup"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">TPCTF2025 EncryptedChat writeup</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">TPCTF2025 EncryptedChat writeup</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="题目描述"><strong>题目描述</strong></h2>
+<blockquote>
+<p>This chat service employs robust end-to-end encryption. Some users report that they occasionally receive corrupted text. Nonetheless, security is the top priority, and minor corruption does not compromise confidentiality.</p>
+</blockquote>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-e6fac6d4" role="button" aria-expanded="false" aria-controls="collapse-e6fac6d4">
+        <div class="fold-arrow">▶</div>source code
+      </div>
+      <div class="fold-collapse collapse" id="collapse-e6fac6d4">
+        <div class="fold-content">
+          <ul><li><p>server.py <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Random <span class="hljs-keyword">import</span> get_random_bytes<br><span class="hljs-keyword">from</span> base64 <span class="hljs-keyword">import</span> b64encode<br><span class="hljs-keyword">from</span> socket <span class="hljs-keyword">import</span> socket, AF_INET, SOCK_STREAM<br><span class="hljs-keyword">from</span> threading <span class="hljs-keyword">import</span> Thread, Lock<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Dict</span>, <span class="hljs-type">List</span>, <span class="hljs-type">Tuple</span><br><br>PORT = <span class="hljs-number">1337</span><br><br>nonce = get_random_bytes(<span class="hljs-number">12</span>)<br><br>sock = socket(AF_INET, SOCK_STREAM)<br>sock.bind((<span class="hljs-string">&#x27;&#x27;</span>, PORT))<br>sock.listen(<span class="hljs-number">5</span>)<br><br>messages: <span class="hljs-type">List</span>[<span class="hljs-type">Tuple</span>[<span class="hljs-built_in">bytes</span>, socket]] = []<br>clients: <span class="hljs-type">Dict</span>[socket, <span class="hljs-built_in">int</span>] = &#123;&#125;<br>mutex = Lock()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">forward_messages</span>() -&gt; <span class="hljs-literal">None</span>:<br>    <span class="hljs-keyword">with</span> mutex:<br>        <span class="hljs-keyword">for</span> client, pos <span class="hljs-keyword">in</span> <span class="hljs-built_in">list</span>(clients.items()):<br>            <span class="hljs-keyword">try</span>:<br>                <span class="hljs-keyword">for</span> message, sender <span class="hljs-keyword">in</span> messages[pos:]:<br>                    <span class="hljs-keyword">if</span> sender != client:<br>                        client.sendall(message)<br>                clients[client] = <span class="hljs-built_in">len</span>(messages)<br>            <span class="hljs-keyword">except</span> (ConnectionError, BrokenPipeError):<br>                <span class="hljs-keyword">del</span> clients[client]<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_client</span>(<span class="hljs-params">client: socket, addr</span>) -&gt; <span class="hljs-literal">None</span>:<br>    <span class="hljs-keyword">global</span> messages<br>    <span class="hljs-keyword">try</span>:<br>        client.sendall(nonce)<br>        forward_messages()<br>        <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>            message = client.recv(<span class="hljs-number">4096</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> message:<br>                <span class="hljs-keyword">break</span><br>            <span class="hljs-keyword">with</span> mutex:<br>                messages.append((message, client))<br>            forward_messages()<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Received message from <span class="hljs-subst">&#123;addr&#125;</span>&#x27;</span>)<br>    <span class="hljs-keyword">except</span> (ConnectionError, BrokenPipeError):<br>        <span class="hljs-keyword">pass</span><br>    <span class="hljs-keyword">finally</span>:<br>        <span class="hljs-keyword">with</span> mutex:<br>            clients.pop(client, <span class="hljs-literal">None</span>)<br>        client.close()<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Connection from <span class="hljs-subst">&#123;addr&#125;</span> closed&#x27;</span>)<br><br><span class="hljs-keyword">try</span>:<br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        client, addr = sock.accept()<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;New connection from <span class="hljs-subst">&#123;addr&#125;</span>&#x27;</span>)<br>        <span class="hljs-keyword">with</span> mutex:<br>            clients[client] = <span class="hljs-number">0</span><br>        Thread(target=handle_client, args=(client, addr), daemon=<span class="hljs-literal">True</span>).start()<br><span class="hljs-keyword">except</span> KeyboardInterrupt:<br>    <span class="hljs-keyword">pass</span><br><span class="hljs-keyword">finally</span>:<br>    sock.close()<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;messages.txt&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    stream = <span class="hljs-string">b&#x27;&#x27;</span>.join(m <span class="hljs-keyword">for</span> m, _ <span class="hljs-keyword">in</span> messages)<br>    <span class="hljs-built_in">print</span>(b64encode(stream).decode(), file=f)<br></code></pre></td></tr></table></figure></p></li><li><p>client.py <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Cipher <span class="hljs-keyword">import</span> ChaCha20<br><span class="hljs-keyword">from</span> base64 <span class="hljs-keyword">import</span> b64decode<br><span class="hljs-keyword">from</span> select <span class="hljs-keyword">import</span> select<br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> socket<br><span class="hljs-keyword">import</span> sys<br><br>PORT = <span class="hljs-number">1337</span><br><br>key = os.environ.get(<span class="hljs-string">&#x27;CHAT_KEY&#x27;</span>)<br><span class="hljs-keyword">assert</span> key <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;CHAT_KEY environment variable must be set&#x27;</span><br>key = b64decode(key)<br><span class="hljs-keyword">assert</span> <span class="hljs-built_in">len</span>(key) == <span class="hljs-number">32</span>, <span class="hljs-string">&#x27;Key must be 32 bytes long&#x27;</span><br><br><span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(sys.argv) != <span class="hljs-number">2</span>:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Usage: python client.py &lt;server_address&gt;&#x27;</span>)<br>    sys.exit(<span class="hljs-number">1</span>)<br>server_address = sys.argv[<span class="hljs-number">1</span>]<br><br>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)<br>sock.connect((server_address, PORT))<br><br>nonce = sock.recv(<span class="hljs-number">12</span>)<br>cipher = ChaCha20.new(key=key, nonce=nonce)<br><br>sock.setblocking(<span class="hljs-literal">False</span>)<br><br><span class="hljs-keyword">try</span>:<br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        readable, _, _ = select([sock, sys.stdin], [], [])<br>        <span class="hljs-keyword">if</span> sock <span class="hljs-keyword">in</span> readable:<br>            data = sock.recv(<span class="hljs-number">4096</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> data:<br>                <span class="hljs-keyword">break</span><br>            data = cipher.encrypt(data)<br>            <span class="hljs-built_in">print</span>(data.decode(errors=<span class="hljs-string">&#x27;replace&#x27;</span>), end=<span class="hljs-string">&#x27;&#x27;</span>, flush=<span class="hljs-literal">True</span>)<br>        <span class="hljs-keyword">if</span> sys.stdin <span class="hljs-keyword">in</span> readable:<br>            data = sys.stdin.readline()<br>            data = cipher.encrypt(data.encode())<br>            sock.sendall(data)<br><span class="hljs-keyword">finally</span>:<br>    sock.close()<br></code></pre></td></tr></table></figure></p></li><li><p><a href="/file/TPCTF2025/messages.txt">messages.txt</a></p></li></ul>
+        </div>
+      </div>
+    </div>
+<h2 id="漏洞利用"><strong>漏洞利用</strong></h2>
+<h3 id="chacha20加密原理"><strong>ChaCha20加密原理</strong></h3>
+<ul>
+<li>实例化一个加密算法<code>ChaCha20.new(key=key, nonce=nonce)</code>，它会用key和nonce初始化自己的密钥流并且通过迭代生成新的密钥流，再用密钥流与明文进行<strong>异或</strong>得到密文。</li>
+<li>新密钥流迭代过程详见<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/12294152293">知乎</a>，在本题中并不重要。</li>
+</ul>
+<h3 id="代码运行逻辑"><strong>代码运行逻辑</strong></h3>
+<ul>
+<li>题目使用了<code>ChaCha20</code>对消息进行加密，server主要负责开启一个聊天室并提供<code>nonce</code>，client共享 ChatKey 并利用聊天室提供的<code>nonce</code>实例化一个加密算法<code>cipher = ChaCha20.new(key=key, nonce=nonce)</code>，由于服务器收到的消息都是加密过后的，并且不知道 ChatKey 的内容，因此无法看到明文;</li>
+<li>client如何看到其他使用者的明文呢？由于发送消息的时候发送者消耗了<code>ChaCha20</code>的部分密钥段，而在接收端会使用该部分密钥段曲加密密文，由于是<strong>异或</strong>操作，会正常显示明文。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">try</span>:<br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        readable, _, _ = select([sock, sys.stdin], [], [])<br>        <span class="hljs-keyword">if</span> sock <span class="hljs-keyword">in</span> readable:<br>            data = sock.recv(<span class="hljs-number">4096</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> data:<br>                <span class="hljs-keyword">break</span><br>            data = cipher.encrypt(data)<br>            <span class="hljs-built_in">print</span>(data.decode(errors=<span class="hljs-string">&#x27;replace&#x27;</span>), end=<span class="hljs-string">&#x27;&#x27;</span>, flush=<span class="hljs-literal">True</span>)<br>        <span class="hljs-keyword">if</span> sys.stdin <span class="hljs-keyword">in</span> readable:<br>            data = sys.stdin.readline()<br>            data = cipher.encrypt(data.encode())<br>            sock.sendall(data)<br><span class="hljs-keyword">finally</span>:<br>    sock.close()<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="题目提示与漏洞关键"><strong>题目提示与漏洞关键</strong></h3>
+<ul>
+<li>可以看到在解密其他使用者发送的密文时，使用的是<code>data.decode(errors='replace')</code>，而且描述中也提及部分使用者反映会看到乱码，这是由消息竞争引起的。试想一下，如果两个使用者同时发送某段消息，会导致加密他们的消息时使用的是<strong>同一段密钥流</strong>，解密的时候会是<strong>下一段密钥流</strong>，所以都会显示为乱码；</li>
+<li>由于加密使用了<strong>同一段密钥流</strong>，服务器便可以通过语义分析来恢复明文。想象一下两段有语义的明文<code>MessageA</code>和<code>MessageB</code>，经过同一段密钥流 C 加密后传给服务器， 那么服务器通过异或这两段密钥便可以得到 <code>MessageA ^ MessageB</code>的值，也就是说，如果我知道部分<code>MessageA</code>的明文，便可获得部分<code>MessageB</code>，再根据语义分析猜测明文后面的部分，便可以恢复出整段明文。</li>
+</ul>
+<h3 id="密文解析"><strong>密文解析</strong></h3>
+<ul>
+<li>题目还给我们上了层强度，最后服务器把所有密文串起来存到文本中。也就是说，我们的目标不仅是找出特定的重合段并恢复 明文，还得找出这一串密文中特定密文的起始位置与结束位置。</li>
+<li>设计代码，由于<code>MessageA ^ MessageB</code>的每个比特的最高位都是0，用来确定并发段的位置。从头遍历密文串，规定消息间隔d，存储第i位与第i+d位异或的结果，如果出现大段比特的最高位都是0的部分我们可以断定这就是并发段的位置： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> base64<br><span class="hljs-keyword">import</span> string<br><br>f = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;messages.txt&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>).read()<br>message = base64.b64decode(f)<br><br>maxd = <span class="hljs-number">500</span><br>mind = <span class="hljs-number">50</span><br>indexres = []<br><span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(mind,maxd):<br>    res = <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(message)-maxd):<br>        res+=<span class="hljs-string">&#x27;@&#x27;</span> <span class="hljs-keyword">if</span> (message[i]^message[i+d])&lt;<span class="hljs-number">128</span> <span class="hljs-keyword">else</span> <span class="hljs-string">&#x27; &#x27;</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;@&quot;</span>*mind <span class="hljs-keyword">in</span> res:<br>        <span class="hljs-keyword">for</span> lenth <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(mind,maxd):<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;@&quot;</span>*lenth <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> res:<br>                <span class="hljs-keyword">break</span><br>        idx = res.find(<span class="hljs-string">&quot;@&quot;</span>*(lenth-<span class="hljs-number">1</span>))<br>        indexres.append([idx,idx+lenth,idx+d,idx+d+lenth])<br>indexres.sort(key=<span class="hljs-keyword">lambda</span> x:(x[<span class="hljs-number">0</span>],x[<span class="hljs-number">2</span>]))<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> indexres:<br>    <span class="hljs-built_in">print</span>(i)    <span class="hljs-comment"># 并发</span><br></code></pre></td></tr></table></figure> <img src="/img/TPCTF2025/TPCTF2025_1.png" srcset="/img/loading.gif" lazyload alt="alt text" /></li>
+<li>从结果可以看出（列表前两位是第一段消息的开头结尾位置，后两位是第二段消息的开头结尾位置），有两大块消息并发的时机，前一段从1187-3437，后一段从7473-9831，每条消息长度大概是200字符左右。</li>
+</ul>
+<h3 id="明文恢复"><strong>明文恢复</strong></h3>
+<ul>
+<li>第一块消息并发的时机明文恢复和第二块的操作是一样的，这里以第一块消息为例。现在我们的已知明文只有<code>TPCTF&#123;</code>，并且并不知道它在这些消息中的位置。但是可以通过遍历所有的可能位置，恢复其他消息的明文，通过其他消息的可读性来确定位置： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> base64<br><span class="hljs-keyword">import</span> string<br><br>f = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;messages.txt&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>).read()<br>message = base64.b64decode(f)<br><br>msglis1 = [[<span class="hljs-number">1187</span>, <span class="hljs-number">1428</span>],<br>        [<span class="hljs-number">1426</span>, <span class="hljs-number">1708</span>],<br>        [<span class="hljs-number">1726</span>, <span class="hljs-number">2001</span>],<br>        [<span class="hljs-number">2005</span>, <span class="hljs-number">2281</span>],<br>        [<span class="hljs-number">2277</span>, <span class="hljs-number">2736</span>],<br>        [<span class="hljs-number">2737</span>, <span class="hljs-number">2955</span>],<br>        [<span class="hljs-number">2954</span>, <span class="hljs-number">3139</span>],<br>        [<span class="hljs-number">3252</span>, <span class="hljs-number">3437</span>]]<br><br>flag = <span class="hljs-string">b&quot;TPCTF&#123;&quot;</span><br><span class="hljs-keyword">for</span> pos <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1187</span>,<span class="hljs-number">3437</span>):<br>    <span class="hljs-keyword">for</span> msg <span class="hljs-keyword">in</span> msglis1:<br>        start,end = msg<br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(start-<span class="hljs-number">10</span>,end+<span class="hljs-number">9</span>):<br>            tmp = <span class="hljs-string">&quot;&quot;</span><br>            <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(flag)):<br>                <span class="hljs-keyword">if</span> <span class="hljs-built_in">chr</span>(message[pos+p]^message[j+p]^flag[p]) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> string.printable:<br>                    <span class="hljs-keyword">break</span><br>                tmp += <span class="hljs-built_in">chr</span>(message[pos+p]^message[j+p]^flag[p])<br>            <span class="hljs-keyword">else</span>:<br>                <span class="hljs-built_in">print</span>(pos,start,j-start,tmp)<br></code></pre></td></tr></table></figure> <img src="/img/TPCTF2025/TPCTF2025_2.png" srcset="/img/loading.gif" lazyload alt="alt text" /></li>
+<li>在输出中看到可疑片段，经过分析可以看到<code>TPCTF&#123;</code>在3042的位置可以恢复出其他明文片段，而且其他明文的位置分别为<code>[1275,1514,1814,2094,2368,2827,3340]</code>。</li>
+<li>接下来步骤就显而易见了，扩充其他位置的语义来恢复flag片段，比如在1814的位置后面肯定是空格等等，过程不再赘述（虽然也很折磨，但是还是很有趣的）。</li>
+<li>这里就只放第一块明文的恢复结果，第二块结果就交给读者了。🥰 <img src="/img/TPCTF2025/TPCTF2025_3.png" srcset="/img/loading.gif" lazyload alt="alt text" /></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CTF-writeup/" class="category-chain-item">CTF writeup</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/09/VNCTF2025/" title="VNCTF2025 writeup">
+                        <span class="hidden-mobile">VNCTF2025 writeup</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://wuyan1345.netlify.app/.netlify/functions/twikoo","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <i class="iconfont icon-copyright"></i> <a href="https://github.com/wuyan1345" target="_blank" rel="nofollow noopener"><span>2025 WuYan</span></a>
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
