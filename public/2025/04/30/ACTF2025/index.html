@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/title.gif">
+  <link rel="icon" href="/assets/title.gif">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="WuYan">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="和等风老师一起出的一道 Crypto 题目😁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACTF2025 OhMyTetration writeup">
+<meta property="og:url" content="http://13.250.14.141/2025/04/30/ACTF2025/index.html">
+<meta property="og:site_name" content="WuYan&#39;s eave">
+<meta property="og:description" content="和等风老师一起出的一道 Crypto 题目😁">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://13.250.14.141/img/ACTF2025/ACTF.jpg">
+<meta property="article:published_time" content="2025-04-30T03:24:38.000Z">
+<meta property="article:modified_time" content="2025-04-30T07:07:12.947Z">
+<meta property="article:author" content="WuYan">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://13.250.14.141/img/ACTF2025/ACTF.jpg">
+  
+  
+  
+  <title>ACTF2025 OhMyTetration writeup - WuYan&#39;s eave</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"13.250.14.141","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>WuYan</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/girl.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ACTF2025 OhMyTetration writeup"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-04-30 11:24" pubdate>
+          2025年4月30日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ACTF2025 OhMyTetration writeup</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="题目描述"><strong>题目描述</strong></h2>
+<blockquote>
+<p>Welcome to my Lottery Center!</p>
+</blockquote>
+
+    <div class="fold">
+      <div class="fold-title fold-info collapsed" data-toggle="collapse" href="#collapse-d27086d1" role="button" aria-expanded="false" aria-controls="collapse-d27086d1">
+        <div class="fold-arrow">▶</div>source code
+      </div>
+      <div class="fold-collapse collapse" id="collapse-d27086d1">
+        <div class="fold-content">
+          <ul><li><p>main.py (不知道写成故事形式有没有人看😪) <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> bytes_to_long<br><span class="hljs-keyword">from</span> secret <span class="hljs-keyword">import</span> LotteryCenter, FLAG<br><span class="hljs-keyword">import</span> signal<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">handler1</span>(<span class="hljs-params">signum, frame</span>):<br>    <span class="hljs-keyword">raise</span> TimeoutError(<span class="hljs-string">&quot;You took too long to make a decision. The boss is not patient.&quot;</span>)<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">handler2</span>(<span class="hljs-params">signum, frame</span>):<br>    e = <span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">Before I can react, a heavy hand clamps onto my shoulder. The boss&#x27;s face is dark with rage. &quot;What the hell did you do?!&quot;</span><br><span class="hljs-string">I stammer, &quot;I just thought the numbers could be luckier...&quot;</span><br><span class="hljs-string">&quot;OUT!&quot; he roars, dragging me toward the door. &quot;And don&#x27;t come back unless you&#x27;ve got the money to replace this thing!&quot;</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br>    <span class="hljs-keyword">raise</span> TimeoutError(e)<br><br>x = bytes_to_long(FLAG)<br><span class="hljs-keyword">assert</span> x.bit_length() &lt;= <span class="hljs-number">512</span><br><br>descrption = <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">You step into the Lottery Center, the bell above the door rings softly as you enter. The air is stale, with an old fan humming above. The walls are lined with lottery posters and flashing numbers. At the counter, a middle-aged man in a dark suit is busy sorting through some papers, unaware of your presence.</span><br><span class="hljs-string"></span><br><span class="hljs-string">The atmosphere is quiet and slightly unsettling. You glance around the room — a corner has an old lottery machine, still occasionally making a &quot;clicking&quot; noise. There&#x27;s a poster on the wall showing today&#x27;s lucky numbers, but they seem somewhat blurry.</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-built_in">print</span>(descrption)<br><br>lotteryCenter = LotteryCenter()<br><br>menu = <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">You&#x27;re left with a few choices:</span><br><span class="hljs-string">1. Talk to the Boss.</span><br><span class="hljs-string">2. Pick Your Lucky Number.</span><br><span class="hljs-string">3. Choose Your Bet Size.</span><br><span class="hljs-string">4. Look Around.</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br>signal.signal(signal.SIGALRM, handler1)<br>signal.alarm(<span class="hljs-number">600</span>)<br><br><span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:<br>    <span class="hljs-built_in">print</span>(menu)<br>    choice = <span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;What do you do? &quot;</span>)<br>    <span class="hljs-keyword">if</span> choice == <span class="hljs-string">&quot;1&quot;</span>:<br>        <span class="hljs-comment"># Choose my favourite number.</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;You approach the counter. The boss looks up briefly, then says in a low voice, \&quot;Today&#x27;s lucky number is <span class="hljs-subst">&#123;lotteryCenter.P&#125;</span>. Trust it, it will bring good luck.\&quot;&quot;</span>)<br>    <span class="hljs-keyword">elif</span> choice == <span class="hljs-string">&quot;2&quot;</span>:<br>        g = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;You decide to pick your own lucky number: &quot;</span>))<br>        <span class="hljs-keyword">if</span> lotteryCenter.defineG(g):<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;You successfully pick your lucky number.&quot;</span>)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;You can&#x27;t pick that number.&quot;</span>)<br>    <span class="hljs-keyword">elif</span> choice == <span class="hljs-string">&quot;3&quot;</span>:<br>        <span class="hljs-keyword">if</span> lotteryCenter.g==<span class="hljs-literal">None</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;You should pick your lucky number first.&quot;</span>)<br>        <span class="hljs-keyword">else</span>:<br>            times = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;You decide to pick your bet size: &quot;</span>))<br>            <span class="hljs-keyword">assert</span> times&gt;<span class="hljs-number">0</span><br>            ticket = lotteryCenter.tetration(times, x)<br>            <span class="hljs-comment"># Calculate the tetration g^g^...^g(times)^x.</span><br>            <span class="hljs-comment"># For example, P=23, g=3, tetration(3, 2) = 3^(3^(3^2)) % 23 = 12.</span><br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;You take the ticket with the number <span class="hljs-subst">&#123;ticket&#125;</span> from the machine, feeling a slight chill in the air. The boss looks at you for a moment longer, his expression unreadable. Then, with a slow smile, he finally speaks, his voice low but clear:&quot;</span>)<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\&quot;Good luck... I hope today is your lucky day.\&quot;&quot;</span>)<br>            <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">elif</span> choice == <span class="hljs-string">&quot;4&quot;</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;The boss seems distracted — perhaps counting cash or sorting through stacks of old receipts, his back turned just enough. Seizing the moment, I slip around to the back of the lottery machine, my fingers hovering over the controls. A quiet smirk tugs at my lips as I mutter under my breath ...&quot;</span>)<br>        lotteryCenter.P = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;I don&#x27;t think the boss&#x27;s lucky number is lucky enough: &quot;</span>))<br>        <span class="hljs-keyword">assert</span> lotteryCenter.P&gt;<span class="hljs-number">1</span><br>        x = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;\&quot;Yes!\&quot; I whisper, overriding the preset algorithm with my own: &quot;</span>))<br>        g = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;You decide to pick your own lucky number: &quot;</span>))<br>        times = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&quot;You decide to pick your bet size: &quot;</span>))<br>        <span class="hljs-keyword">assert</span> times&gt;<span class="hljs-number">0</span><br>        signal.signal(signal.SIGALRM, handler2)<br>        signal.alarm(<span class="hljs-number">10</span>)<br>        <span class="hljs-keyword">try</span>:<br>            <span class="hljs-keyword">if</span> lotteryCenter.defineG(g):<br>                ticket = lotteryCenter.tetration(times, x)<br>                <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;You take the ticket with the number <span class="hljs-subst">&#123;ticket&#125;</span> from the machine secretly.&quot;</span>)<br>            <span class="hljs-keyword">else</span>:<br>                <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Oops! The lottery machine whirs weakly as I finish tampering with its settings — then suddenly, the screen flickers violently before dying with a pathetic click. A thin wisp of smoke curls from the vents.&quot;</span>)<br>        <span class="hljs-keyword">except</span> TimeoutError <span class="hljs-keyword">as</span> e:<br>            <span class="hljs-built_in">print</span>(e)<br>        <span class="hljs-keyword">finally</span>:<br>            signal.alarm(<span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Nothing here.&quot;</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nYou exit the Lottery Center, the door closing softly behind you. The bell rings once more, leaving you standing outside, holding the ticket — unsure if you&#x27;ve just stepped into a stroke of luck... or something else entirely.&quot;</span>)<br></code></pre></td></tr></table></figure></p></li><li><p>secret.py <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> random<br><span class="hljs-keyword">from</span> sympy <span class="hljs-keyword">import</span> totient, factorint, gcd<br><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> isPrime<br><br>FLAG = <span class="hljs-string">b&quot;Lucky won&#x27;t help you but wisdom can! ACTF&#123;0oooooh_My_T3tr@ti0n!&#125;&quot;</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">LotteryCenter</span>():<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, p=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-variable language_">self</span>.primelis = [<span class="hljs-number">670144747631070976739015819027954827310379693667090873445520193836663869580245599076670148076473491050020123654751096623483807617465722698994356143777563707</span>,<br>                         <span class="hljs-number">170953236075981703101107323627149749446399094948416530919519737926722425019602066485332700625463008928220692022155525741201814917060803040398296096589112909590796816127</span>,<br>                         <span class="hljs-number">35756093982019706426293639025599400558582772921867310666401488874611580043479377203647832136951529097764525162097024888170529918256990041464461134501152163496501126743211147409398847307</span>,<br>                         <span class="hljs-number">7531993227394432935495469175847581786870840148535987047046105838996369558316042438597087283959689643904418638897096661950504686097925188166275662098492041069</span>,<br>                         <span class="hljs-number">1502305675703953507826564356364207463785905265358954425050832597353379827611347779894929874274487297076504174110953417469304402049079223143080164648064147459</span>,<br>                         <span class="hljs-number">239187462979118019747230815457958990366061401854539190633596878790038851736407756334693453965940382959498959881612616858277374759576574603849900365838546947</span>,<br>                         <span class="hljs-number">69733552883983886441106168440790711150895644030197258530275106690507328511836880029685067160750932842368374328059309873559063711214389833094390485760319482905397</span>,<br>                         <span class="hljs-number">1079057966637328314460077867877075467713192523793597903382852641891007375448706143257181174464331232997171389558347754330749095005274030323571444891328903479</span>]<br>        <span class="hljs-variable language_">self</span>.phiknown = &#123;<span class="hljs-number">34124930134715518896711529236982688435544676865841211621198456465567416080260600865590564780793009688818566160539662278550180113998531194918531514308241449081272</span>:<span class="hljs-number">2</span>**<span class="hljs-number">2</span>*(<span class="hljs-number">2</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">23</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">101</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">37243640265190289056815017157576025916805452107126785187021662435461265854381795783</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">49303806576313237838233035330174139354575402194313937798142433166503906251</span>-<span class="hljs-number">1</span>),<br>                         <span class="hljs-number">533966828851461433959626161423707447940548877753532983117287905265653134242658710065409240972040197771796151534027754720370686188176839747746694379214302656</span>:<span class="hljs-number">2</span>**<span class="hljs-number">5</span>*(<span class="hljs-number">2</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">3</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">19</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">503</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">1910009901593650473786381403548828023839870277948686259673707683</span>-<span class="hljs-number">1</span>)*(<span class="hljs-number">152354696091732784678579455441231123500849602804790393448003131489914274686066076039203</span>-<span class="hljs-number">1</span>)&#125;<br>        <span class="hljs-variable language_">self</span>.P = p <span class="hljs-keyword">if</span> p <span class="hljs-keyword">else</span> random.choice(<span class="hljs-variable language_">self</span>.primelis)<br>        <span class="hljs-variable language_">self</span>.philis = []<br>        <span class="hljs-variable language_">self</span>.g = <span class="hljs-literal">None</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_getPhiLis</span>(<span class="hljs-params">self, p=<span class="hljs-literal">None</span></span>):<br>        phi = p <span class="hljs-keyword">if</span> p <span class="hljs-keyword">else</span> <span class="hljs-variable language_">self</span>.P<br>        <span class="hljs-variable language_">self</span>.philis = []<br>        <span class="hljs-keyword">while</span> phi!=<span class="hljs-number">1</span>:<br>            <span class="hljs-variable language_">self</span>.philis.append(phi)<br>            phi = <span class="hljs-variable language_">self</span>.phiknown[phi] <span class="hljs-keyword">if</span> phi <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.phiknown <span class="hljs-keyword">else</span> totient(phi)<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.philis<br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_check</span>(<span class="hljs-params">self, g</span>):<br>        <span class="hljs-keyword">if</span> g==<span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> g==<span class="hljs-number">0</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.philis:<br>            <span class="hljs-keyword">if</span> gcd(g, i) != <span class="hljs-number">1</span>:<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">defineG</span>(<span class="hljs-params">self, g</span>):<br>        <span class="hljs-variable language_">self</span>._getPhiLis()<br>        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>._check(g):<br>            <span class="hljs-variable language_">self</span>.g = g<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">tetration</span>(<span class="hljs-params">self, times, x</span>):<br>        <span class="hljs-keyword">if</span> times&gt;<span class="hljs-built_in">len</span>(<span class="hljs-variable language_">self</span>.philis):<br>            <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.tetration(<span class="hljs-built_in">len</span>(<span class="hljs-variable language_">self</span>.philis), <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">if</span> times&lt;<span class="hljs-number">1</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>        res = x<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(times-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>):<br>            res = <span class="hljs-built_in">pow</span>(<span class="hljs-variable language_">self</span>.g, res, <span class="hljs-variable language_">self</span>.philis[i])<br>        <span class="hljs-keyword">return</span> res<br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">checkPrime</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.primelis:<br>            <span class="hljs-variable language_">self</span>.P = i<br>            <span class="hljs-variable language_">self</span>.defineG(<span class="hljs-number">43</span>)<br>            <span class="hljs-keyword">assert</span> isPrime(i)<br>            <span class="hljs-keyword">assert</span> <span class="hljs-built_in">list</span>(factorint(<span class="hljs-variable language_">self</span>.philis[<span class="hljs-number">1</span>]).keys())[-<span class="hljs-number">1</span>].bit_length() &gt; <span class="hljs-number">500</span>  <span class="hljs-comment"># secure for DLP</span><br>            <span class="hljs-comment"># idx = len(self.philis)-100</span><br>            <span class="hljs-comment"># print(self.tetration(idx, 0)==self.tetration(idx, 1))</span><br>            <span class="hljs-comment"># print(&quot;pass: &quot;, i)</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>        <br>    <br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    lottery = LotteryCenter(<span class="hljs-number">23</span>)<br>    lottery.defineG(<span class="hljs-number">3</span>)<br>    <span class="hljs-built_in">print</span>(lottery.tetration(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>))  <span class="hljs-comment"># 3^(3^(3^2)) % 23</span><br>    lottery.checkPrime()<br></code></pre></td></tr></table></figure></p></li></ul>
+        </div>
+      </div>
+    </div>
+<h2 id="解题思路"><strong>解题思路</strong></h2>
+<ul>
+<li>题目主要实现了迭代幂次的计算，根据欧拉定理可以不断套欧拉函数快速计算结果（我们认为这是一个考察点，因此不提供<code>tetration</code>函数，但提供了选项四便于测试）,基于此可以自行实现<code>tetration</code>函数。 <span class="math display">\[ g^{g^{g^{...^{g^x}}}} \equiv g^{g^{g^{...^{g^{x \mod \phi^{t+1}(P)} \mod \phi^{t}(P)} ... } \mod \phi^2(P)} \mod \phi(P)} \pmod {P} \]</span> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">getPhiLis</span>(<span class="hljs-params">P</span>):<br>    philis = []<br>    phi = P<br>    <span class="hljs-keyword">while</span> phi!=<span class="hljs-number">1</span>:<br>        philis.append(phi)<br>        phi = totient(phi)<br>        <span class="hljs-comment"># print(factorint(phi))</span><br>    <span class="hljs-keyword">return</span> philis<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">tetration</span>(<span class="hljs-params">g, times, x, philis</span>):<br>    <span class="hljs-keyword">if</span> times&gt;<span class="hljs-built_in">len</span>(philis):<br>        <span class="hljs-keyword">return</span> tetration(g, <span class="hljs-built_in">len</span>(philis), <span class="hljs-number">0</span>, philis)<br>    res = x<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(times-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>):<br>        res = <span class="hljs-built_in">pow</span>(g, res, philis[i])<br>    <span class="hljs-keyword">return</span> res<br></code></pre></td></tr></table></figure></li>
+<li>容易发现在迭代 t 次后若有 <span class="math inline">\(\phi^{t-1}(P)=2\)</span> ，则 <span class="math inline">\(\phi^{t}(P)=1\)</span>，因此迭代幂次次数为 t 次或更高次后，结果恒为某个固定的值。</li>
+<li>假设对于每一层而言 g 都是 <span class="math inline">\(Zmod(\phi^{k}(P))\)</span> 的原根，则在迭代 t-1 次时便可遍历 <span class="math inline">\(\phi^{t-1}(P)\)</span> 种情况得到 <span class="math inline">\(x\%\phi^{t-1}(P)\)</span> 的值。逐步递减迭代次数，在迭代 k 次可遍历 <span class="math inline">\(\phi^{k}(P) // \phi^{k+1}(P)\)</span> 种情况在已知 <span class="math inline">\(x\%\phi^{k+1}(P)\)</span> 的情况下得到 <span class="math inline">\(x\%\phi^{k}(P)\)</span> 的值来恢复 x （要求 <span class="math inline">\(\phi^{k}(P) \% \phi^{k+1}(P) =0\)</span>）</li>
+<li>实际上，我们难以做到使得对于每一层而言 g 都是原根，但只要满足大部分层数满足原根条件，可以在较高层保持这种性质，并且得到的 x 的长度与 P 大致相当。因此题目本意是在提供的众多 P 中找到恰当的 P 使得其满足上述条件（事实上只有一个），然后通过上述方法恢复 x 即可。</li>
+</ul>
+<h2 id="参考代码"><strong>参考代码</strong></h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">from</span> sympy <span class="hljs-keyword">import</span> totient, factorint<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> trange<br><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> long_to_bytes, bytes_to_long<br><br>context.log_level = <span class="hljs-string">&quot;critical&quot;</span><br><br>g = <span class="hljs-number">5</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">interative</span>(<span class="hljs-params">targetP, times</span>):<br>    p = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:<br>        io = process([<span class="hljs-string">&quot;python&quot;</span>,<span class="hljs-string">&quot;main.py&quot;</span>])<br>        <span class="hljs-comment"># io = remote(&quot;1.95.137.123&quot;,9999)</span><br>        io.recvuntil(<span class="hljs-string">b&quot;What do you do? &quot;</span>)<br>        io.sendline(<span class="hljs-string">b&quot;1&quot;</span>)<br>        p = <span class="hljs-built_in">int</span>(re.findall(<span class="hljs-string">&quot;\d+&quot;</span>,io.recvline().decode(<span class="hljs-string">&quot;utf-8&quot;</span>))[<span class="hljs-number">0</span>])<br>        <span class="hljs-keyword">if</span> p==targetP:<br>            <span class="hljs-keyword">break</span><br>        io.close()<br><br>    io.recvuntil(<span class="hljs-string">b&quot;What do you do? &quot;</span>)<br>    io.sendline(<span class="hljs-string">b&quot;2&quot;</span>)<br>    io.sendlineafter(<span class="hljs-string">b&quot;You decide to pick your own lucky number: &quot;</span>,<span class="hljs-built_in">str</span>(g).encode())<br>    <span class="hljs-keyword">assert</span> io.recvline() == <span class="hljs-string">b&quot;You successfully pick your lucky number.\n&quot;</span><br><br>    io.recvuntil(<span class="hljs-string">b&quot;What do you do? &quot;</span>)<br>    io.sendline(<span class="hljs-string">b&quot;3&quot;</span>)<br>    io.sendlineafter(<span class="hljs-string">b&quot;You decide to pick your bet size: &quot;</span>,<span class="hljs-built_in">str</span>(times).encode())<br>    res = <span class="hljs-built_in">int</span>(re.findall(<span class="hljs-string">&quot;\d+&quot;</span>,io.recvline().decode(<span class="hljs-string">&quot;utf-8&quot;</span>))[<span class="hljs-number">0</span>])<br>    io.close()<br><br>    <span class="hljs-keyword">return</span> res<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">getPhiLis</span>(<span class="hljs-params">P</span>):<br>    philis = []<br>    phi = P<br>    <span class="hljs-keyword">while</span> phi!=<span class="hljs-number">1</span>:<br>        philis.append(phi)<br>        phi = totient(phi)<br>        <span class="hljs-comment"># print(factorint(phi))</span><br>    <span class="hljs-keyword">return</span> philis<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">tetration</span>(<span class="hljs-params">g, times, x, philis</span>):<br>    <span class="hljs-keyword">if</span> times&gt;<span class="hljs-built_in">len</span>(philis):<br>        <span class="hljs-keyword">return</span> tetration(g, <span class="hljs-built_in">len</span>(philis), <span class="hljs-number">0</span>, philis)<br>    res = x<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(times-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>):<br>        res = <span class="hljs-built_in">pow</span>(g, res, philis[i])<br>    <span class="hljs-keyword">return</span> res<br><br>p = <span class="hljs-number">670144747631070976739015819027954827310379693667090873445520193836663869580245599076670148076473491050020123654751096623483807617465722698994356143777563707</span><br>philis = getPhiLis(p)<br><span class="hljs-comment"># print(getPhiLis(5))</span><br><span class="hljs-comment"># print(tetration(3, len(getPhiLis(5))-1, 0, getPhiLis(5))==tetration(3, len(getPhiLis(5))-1, 1, getPhiLis(5)))</span><br>idx = <span class="hljs-built_in">len</span>(philis)-<span class="hljs-number">7</span><br><span class="hljs-built_in">print</span>(idx)<br><span class="hljs-keyword">assert</span> tetration(g, idx, <span class="hljs-number">0</span>, philis)!=tetration(g, idx, <span class="hljs-number">1</span>, philis)<br><span class="hljs-keyword">assert</span> tetration(g, idx, <span class="hljs-number">0</span>, philis)==tetration(g, idx, <span class="hljs-number">2</span>, philis)<br><br>res = <span class="hljs-number">0</span><br>base = <span class="hljs-number">2</span><br>t = interative(p, idx)<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(base):<br>    <span class="hljs-keyword">if</span> tetration(g, idx, i, philis) == t:<br>        res = i<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;x mod <span class="hljs-subst">&#123;base&#125;</span>: &quot;</span>, res)<br>        <span class="hljs-keyword">break</span><br><br>step = <span class="hljs-number">5</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> trange(idx-step,<span class="hljs-number">1</span>,-step):<br>    <span class="hljs-keyword">assert</span> philis[i]%philis[i+step]==<span class="hljs-number">0</span><br>    t = interative(p, i)<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(philis[i]//philis[i+step]):<br>        <span class="hljs-keyword">if</span> tetration(g, i, res+j*base, philis) == t:<br>            res = res+j*base<br>            base *= philis[i]//philis[i+step]<br>            <span class="hljs-comment"># print(f&quot;x mod &#123;base&#125;: &quot;, res)</span><br>            <span class="hljs-comment"># print(x%base)</span><br>            <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">else</span>:<br>        exit()<br><br><span class="hljs-comment"># not enough</span><br>t = interative(p, <span class="hljs-number">1</span>)<br><span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(p//base):<br>    <span class="hljs-keyword">if</span> tetration(g, <span class="hljs-number">1</span>, res+k*base, philis) == t:<br>        res = res+k*base<br>        <span class="hljs-keyword">break</span><br><br><span class="hljs-built_in">print</span>(long_to_bytes(res))<br></code></pre></td></tr></table></figure>
+<h2 id="一些小插曲"><strong>一些小插曲</strong></h2>
+<ul>
+<li>在设置混淆 P 的时候只考虑了 DLP 安全，但是实际上如果 <span class="math inline">\(\phi(P)\)</span> 光滑仍可以用 DDLP 解决，在收集上来的六份 WP 中有三只队伍是用此方法解决的。（而且部分混淆 P 分解时间较长，在 <code>defineG</code> 函数中为了满足欧拉定理需满足 g 与每一层 phi 都互质，导致如果以此类 P 作为目标交互时间会较长）</li>
+<li>部分混淆 P 也可以用预期方法求解，但是经过构造得到的 x 长度只有 P 的一半甚至更少。本意如此，但是选取列表中第四个 P 可以得到 x 模 2 的幂次（约两百多位），而 flag 设置不当导致选取此 P 也可以解出。</li>
+<li>事实上，x的值并不一定要小于 P，在不同的 P 下可以得到 x 模某个 phi 的值，最后再利用中国剩余定理也是可以求解更大的 x 的。</li>
+<li>Final 8 solutions. Inspired by <a target="_blank" rel="noopener" href="https://crypto.stackexchange.com/questions/98825/how-difficult-is-finding-i-in-tetration-ig-g-uparrow-uparrow-i-under/98827#98827">stackoverflow</a>. Thanks to DengFeng.</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CTF-writeup/" class="category-chain-item">CTF writeup</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://wuyan1345.netlify.app/.netlify/functions/twikoo","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <i class="iconfont icon-copyright"></i> <a href="https://github.com/wuyan1345" target="_blank" rel="nofollow noopener"><span>2025 WuYan</span></a>
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
