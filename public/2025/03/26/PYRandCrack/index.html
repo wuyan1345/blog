@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://13.250.14.141/img/PYRandCrack/PYRandCrack.png">
 <meta property="article:published_time" content="2025-03-26T07:59:17.000Z">
-<meta property="article:modified_time" content="2025-04-29T07:13:46.248Z">
+<meta property="article:modified_time" content="2025-09-23T02:43:54.700Z">
 <meta property="article:author" content="WuYan">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://13.250.14.141/img/PYRandCrack/PYRandCrack.png">
@@ -230,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          860 字
+          902 字
         
       </span>
     
@@ -344,7 +344,10 @@
             
               <div class="markdown-body">
                 
-                <blockquote>
+                <div class="note note-warning">
+            <p>此文档已更新2.0版本，见 <a href="/2025/09/17/PYRandCrack2/">Python Random(MT19937) Crack 2.0</a> 。2.0版本新增了通过随机数生成器状态获取种子的功能，支持smallseed。</p>
+          </div>
+<blockquote>
 <p>本代码基于Python的随机数生成与内部state转换线性性质进行编写，并不是根据生成的624个一轮随机数直接逆向解出初始的state值。网络上有一些公共的Python的randcrack函数，要求每次提供 <code>random.getrandbits(32)</code> 即32位数据，而在日常中经常会出现的<code>random.getrandbits(8)</code>（截取32位的高8位），甚至每隔一次提供一个随机数等等情况，这些都是无法用公共库解决的。笔者编写本代码就是为解决这些问题而服务的。</p>
 </blockquote>
 <h2 id="sourcecode">SourceCode</h2>
